@@ -4,6 +4,7 @@ import logging
 import time
 import win32gui
 import win32process
+import argparse
 
 from PyQt4 import QtGui,  QtCore
 from PyQt4.QtCore import Qt
@@ -195,7 +196,6 @@ class MainWin(QtGui.QDialog):
     def showManual(self, link):
         logging.debug("showManual")
         cmd = self.sender().config.get("manual")
-        logging.debug(self.sender().config)
         if isinstance(cmd, type([])) and len(cmd) == 2:
             cmd[0](cmd[1])
 
@@ -312,7 +312,7 @@ class MainWin(QtGui.QDialog):
             pass
 
 
-def start():
+def start(args):
     """Start the application
     """
     app = QtGui.QApplication(sys.argv)
@@ -328,12 +328,16 @@ def start():
         QtGui.QMessageBox.critical(0, PROGNAME,
             "I couldn't detect any system tray on this system.")
         sys.exit(1)
-    QtGui.QApplication.setQuitOnLastWindowClosed("-n" in app.arguments())
-    logging.debug("stdwinapp={0}".format("-n" in app.arguments()))
+    QtGui.QApplication.setQuitOnLastWindowClosed(args.notray)
+    logging.debug("stdwinapp={0}".format(args.notray))
     mainwin = MainWin(app)
     mainwin.show()
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    start()
+    parser = argparse.ArgumentParser(description='Yet another program launcher')
+    parser.add_argument('-n', dest='notray', action='store_true',
+                   help='do not minimize to tray')
+    args = parser.parse_args()
+    start(args)
