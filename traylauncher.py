@@ -75,6 +75,8 @@ class DDLabel(QtGui.QLabel):
     def setPushButton(self, pushButton):
         self.pushButton = pushButton
 
+    def setConfig(self, config):
+        self.config = config
 
     def dragEnterEvent(self, event):
         self.pushButton.dragEnterEvent(event)
@@ -154,6 +156,7 @@ class MainWin(QtGui.QDialog):
                 else:
                     text = button["name"]
                 label = DDLabel(text)
+                label.setConfig(button)
                 if button.get("help"):
                     if isinstance(button.get("help"), type("")):
                         label.setToolTip(button["help"])
@@ -190,7 +193,9 @@ class MainWin(QtGui.QDialog):
 
 
     def showManual(self, link):
+        logging.debug("showManual")
         cmd = self.sender().config.get("manual")
+        logging.debug(self.sender().config)
         if isinstance(cmd, type([])) and len(cmd) == 2:
             cmd[0](cmd[1])
 
