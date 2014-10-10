@@ -167,8 +167,12 @@ class MainWin(QtGui.QDialog):
                         if not button["name"] in settings.childKeys():
                             # if help string is not in settings file add it 
                             logging.debug("get help and write to settings")
-                            settings.setValue(button["name"], button.get("help")[0](button.get("help")[1]))
-                        label.setToolTip(settings.value(button["name"]).toString())
+                            settings.setValue(button["name"], button.get("help")[0](button.get("help")[1]).decode())
+                        ##
+                        if sys.version_info.major == 2:
+                            label.setToolTip(settings.value(button["name"]).toString())
+                        else:
+                            label.setToolTip(settings.value(button["name"]))
                         settings.endGroup()
                 label.linkActivated.connect(self.showManual)
                 label.setPushButton(pushButton)
